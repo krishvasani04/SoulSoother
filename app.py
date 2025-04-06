@@ -144,92 +144,92 @@ def navigate_to(page):
         # The simplest way to cause a rerun in older Streamlit
         raise Exception("This is a controlled exception to force a rerun in older Streamlit")
 
-# Sidebar navigation
-with st.sidebar:
-    st.image("assets/calm.svg", width=100)
+# Sidebar navigation - older Streamlit compatible version (no context manager)
+# Add logo to sidebar
+st.sidebar.image("assets/calm.svg", width=100)
+
+# Style the sidebar header with custom HTML
+st.sidebar.markdown(f"""
+<div style="text-align: center; margin-bottom: 20px;">
+    <h2 style="color: #FF4B8B; margin-bottom: 0;">Hey Boopie! 💕</h2>
+    <p style="font-style: italic; color: #9D6381;">Tools for when your mind races</p>
+</div>
+""", unsafe_allow_html=True)
+
+# Add subtle spacing between buttons
+st.sidebar.markdown('<div style="height: 10px;"></div>', unsafe_allow_html=True)
+
+# Navigation buttons with icons
+emoji_dict = {
+    'home': '🏠', 
+    'breathing': '🌬️', 
+    'grounding': '🌿', 
+    'reframing': '💭', 
+    'journal': '📓'
+}
+
+button_names = ['Home', 'Breathing Exercise', 'Grounding Exercise', 'Thought Reframing', 'Thought Journal']
+button_routes = ['home', 'breathing', 'grounding', 'reframing', 'journal']
+
+for name, route in zip(button_names, button_routes):
+    # Check if this is the current page
+    is_active = st.session_state.current_page == route
     
-    # Style the sidebar header with custom HTML
-    st.markdown(f"""
-    <div style="text-align: center; margin-bottom: 20px;">
-        <h2 style="color: #FF4B8B; margin-bottom: 0;">Hey Boopie! 💕</h2>
-        <p style="font-style: italic; color: #9D6381;">Tools for when your mind races</p>
-    </div>
-    """, unsafe_allow_html=True)
-    
-    # Add subtle spacing between buttons
-    st.markdown('<div style="height: 10px;"></div>', unsafe_allow_html=True)
-    
-    # Navigation buttons with icons
-    emoji_dict = {
-        'home': '🏠', 
-        'breathing': '🌬️', 
-        'grounding': '🌿', 
-        'reframing': '💭', 
-        'journal': '📓'
-    }
-    
-    button_names = ['Home', 'Breathing Exercise', 'Grounding Exercise', 'Thought Reframing', 'Thought Journal']
-    button_routes = ['home', 'breathing', 'grounding', 'reframing', 'journal']
-    
-    for name, route in zip(button_names, button_routes):
-        # Check if this is the current page
-        is_active = st.session_state.current_page == route
-        
-        # Different styling for active button
-        if is_active:
-            st.markdown(f"""
-            <div style="background-color: #FFC6D9; border-radius: 15px; padding: 10px; text-align: center; margin: 5px 0;">
-                <span style="color: #FF4B8B; font-weight: bold;">{emoji_dict[route]} {name}</span>
-            </div>
-            """, unsafe_allow_html=True)
-        else:
-            if st.button(f"{emoji_dict[route]} {name}", key=f"nav_{route}", 
-                      use_container_width=True, on_click=navigate_to, args=(route,)):
-                pass
-    
-    # Add a decorative divider
-    st.markdown("""
-    <div style="margin: 20px 0; text-align: center;">
-        <div style="height: 2px; background-image: linear-gradient(to right, transparent, #FFB0EE, transparent);"></div>
-    </div>
-    """, unsafe_allow_html=True)
-    
-    # Personal touches with more elegant styling
-    st.markdown(f"""
-    <div style="text-align: center; background-color: #FFF0F7; border-radius: 10px; padding: 10px; margin: 10px 0;">
-        <div style="font-weight: bold; color: #FF6B9D;">Bean & Boopie</div>
-        <div style="font-style: italic; font-size: 0.9em;">{days_together} days of adventures together 💫</div>
-    </div>
-    """, unsafe_allow_html=True)
-    
-    # Affirmation with prettier styling
-    affirmation = get_affirmation()
-    st.markdown("""
-    <div style="margin: 20px 0; text-align: center;">
-        <div style="height: 2px; background-image: linear-gradient(to right, transparent, #FFB0EE, transparent);"></div>
-    </div>
-    """, unsafe_allow_html=True)
-    
-    st.markdown(f"""
-    <div style="font-style: italic; text-align: center; color: #FF8BAD; padding: 10px; border-radius: 10px; background-color: #FFF8FA;">
-        "{affirmation}"
-    </div>
-    """, unsafe_allow_html=True)
-    
-    # Song recommendation with elegant styling
-    st.markdown("""
-    <div style="margin: 20px 0; text-align: center;">
-        <div style="height: 2px; background-image: linear-gradient(to right, transparent, #FFB0EE, transparent);"></div>
-    </div>
-    """, unsafe_allow_html=True)
-    
-    st.markdown("""
-    <div style="text-align: center; background-color: #FFF0F7; border-radius: 10px; padding: 10px; margin: 10px 0;">
-        <div style="font-weight: bold; color: #FF6B9D;">When you need a smile 🎵</div>
-        <div style="font-size: 0.9em; margin-top: 5px;">Listen to 'ilym' by John K</div>
-        <div style="font-style: italic; font-size: 0.8em;">Or check out our 'Happy Baby' playlist 🎧</div>
-    </div>
-    """, unsafe_allow_html=True)
+    # Different styling for active button
+    if is_active:
+        st.sidebar.markdown(f"""
+        <div style="background-color: #FFC6D9; border-radius: 15px; padding: 10px; text-align: center; margin: 5px 0;">
+            <span style="color: #FF4B8B; font-weight: bold;">{emoji_dict[route]} {name}</span>
+        </div>
+        """, unsafe_allow_html=True)
+    else:
+        if st.sidebar.button(f"{emoji_dict[route]} {name}", key=f"nav_{route}", 
+                  use_container_width=True, on_click=navigate_to, args=(route,)):
+            pass
+
+# Add a decorative divider
+st.sidebar.markdown("""
+<div style="margin: 20px 0; text-align: center;">
+    <div style="height: 2px; background-image: linear-gradient(to right, transparent, #FFB0EE, transparent);"></div>
+</div>
+""", unsafe_allow_html=True)
+
+# Personal touches with more elegant styling
+st.sidebar.markdown(f"""
+<div style="text-align: center; background-color: #FFF0F7; border-radius: 10px; padding: 10px; margin: 10px 0;">
+    <div style="font-weight: bold; color: #FF6B9D;">Bean & Boopie</div>
+    <div style="font-style: italic; font-size: 0.9em;">{days_together} days of adventures together 💫</div>
+</div>
+""", unsafe_allow_html=True)
+
+# Affirmation with prettier styling
+affirmation = get_affirmation()
+st.sidebar.markdown("""
+<div style="margin: 20px 0; text-align: center;">
+    <div style="height: 2px; background-image: linear-gradient(to right, transparent, #FFB0EE, transparent);"></div>
+</div>
+""", unsafe_allow_html=True)
+
+st.sidebar.markdown(f"""
+<div style="font-style: italic; text-align: center; color: #FF8BAD; padding: 10px; border-radius: 10px; background-color: #FFF8FA;">
+    "{affirmation}"
+</div>
+""", unsafe_allow_html=True)
+
+# Song recommendation with elegant styling
+st.sidebar.markdown("""
+<div style="margin: 20px 0; text-align: center;">
+    <div style="height: 2px; background-image: linear-gradient(to right, transparent, #FFB0EE, transparent);"></div>
+</div>
+""", unsafe_allow_html=True)
+
+st.sidebar.markdown("""
+<div style="text-align: center; background-color: #FFF0F7; border-radius: 10px; padding: 10px; margin: 10px 0;">
+    <div style="font-weight: bold; color: #FF6B9D;">When you need a smile 🎵</div>
+    <div style="font-size: 0.9em; margin-top: 5px;">Listen to 'ilym' by John K</div>
+    <div style="font-style: italic; font-size: 0.8em;">Or check out our 'Happy Baby' playlist 🎧</div>
+</div>
+""", unsafe_allow_html=True)
 
 # Home page
 if st.session_state.current_page == 'home':
@@ -260,29 +260,39 @@ if st.session_state.current_page == 'home':
     </div>
     """, unsafe_allow_html=True)
     
-    # Styled mood selection buttons
+    # Styled mood selection buttons - adaptable for older Streamlit versions
     mood_options = [
         {"title": "Anxious or worried", "icon": "😰", "color": "#8AADF4", "route": "breathing"},
         {"title": "Stuck in my thoughts", "icon": "🤔", "color": "#A6DA95", "route": "grounding"},
         {"title": "Need perspective", "icon": "🧐", "color": "#F5BDE6", "route": "reframing"}
     ]
     
-    cols = st.columns(3)
-    for i, option in enumerate(mood_options):
-        with cols[i]:
-            st.markdown(f"""
-            <div style="text-align: center; cursor: pointer;" onclick="document.getElementById('btn_{option['route']}').click();">
-                <div style="font-size: 2rem; margin-bottom: 0.5rem;">{option['icon']}</div>
-                <div style="background-color: {option['color']}; color: white; padding: 10px; 
-                            border-radius: 10px; font-weight: bold;">
-                    {option['title']}
-                </div>
+    # Create a single HTML string with all buttons in a row
+    buttons_html = '<div style="display: flex; justify-content: space-between; margin-bottom: 20px;">'
+    
+    for option in mood_options:
+        buttons_html += f'''
+        <div style="flex: 1; text-align: center; margin: 0 5px;">
+            <div style="font-size: 2rem; margin-bottom: 0.5rem;">{option['icon']}</div>
+            <div style="background-color: {option['color']}; color: white; padding: 10px; 
+                      border-radius: 10px; font-weight: bold;">
+                {option['title']}
             </div>
-            """, unsafe_allow_html=True)
-            # Hidden button for the onClick handler
-            if st.button(option['title'], key=f"btn_{option['route']}", 
-                      use_container_width=True, on_click=navigate_to, args=(option['route'],)):
-                pass
+        </div>
+        '''
+    
+    buttons_html += '</div>'
+    
+    # Display the mood buttons as HTML
+    st.markdown(buttons_html, unsafe_allow_html=True)
+    
+    # Add the action buttons separately
+    st.markdown('<div style="display: flex; justify-content: space-between; margin-bottom: 20px;">', unsafe_allow_html=True)
+    for option in mood_options:
+        if st.button(f"Go to {option['title']}", key=f"btn_{option['route']}", 
+                  on_click=navigate_to, args=(option['route'],)):
+            pass
+    st.markdown('</div>', unsafe_allow_html=True)
     
     # Styled divider
     st.markdown("""
@@ -302,14 +312,20 @@ if st.session_state.current_page == 'home':
     # Check for today's message in the database
     today_message = db.get_today_message()
     
-    # If no message for today, provide option to generate one
+    # If no message for today, provide option to generate one - older Streamlit compatible
     if not today_message:
         if st.button("Get today's special message", key="daily_message_btn"):
-            with st.spinner("Bean is writing something just for you..."):
-                new_message = generate_custom_affirmation()
-                # Save the message to the database
-                db.save_daily_message(new_message)
-                today_message = new_message
+            # Older Streamlit-friendly spinner 
+            spinner_placeholder = st.empty()
+            spinner_placeholder.markdown("Bean is writing something just for you...")
+            
+            new_message = generate_custom_affirmation()
+            # Save the message to the database
+            db.save_daily_message(new_message)
+            today_message = new_message
+            
+            # Clear spinner
+            spinner_placeholder.empty()
     
     # Display the message if it exists
     if today_message:
@@ -357,17 +373,18 @@ if st.session_state.current_page == 'home':
     </div>
     """, unsafe_allow_html=True)
     
-    # Add direct link to AI advice
+    # Add direct link to AI advice - compatible with older Streamlit
     st.markdown("""
     <div style="text-align: center; margin: 2rem 0 1rem 0;">
         <h3 style="color: #FF4B8B; margin-bottom: 1rem;">Need Bean's advice right now?</h3>
     </div>
     """, unsafe_allow_html=True)
     
-    col1, col2, col3 = st.columns([1, 2, 1])
-    with col2:
-        if st.button("Get Personalized Advice", use_container_width=True, on_click=navigate_to, args=('journal',)):
-            pass
+    # Using HTML to center the button instead of columns
+    st.markdown('<div style="display: flex; justify-content: center;">', unsafe_allow_html=True)
+    if st.button("Get Personalized Advice", on_click=navigate_to, args=('journal',)):
+        pass
+    st.markdown('</div>', unsafe_allow_html=True)
 
 # Breathing exercise page
 elif st.session_state.current_page == 'breathing':
@@ -494,10 +511,15 @@ elif st.session_state.current_page == 'reframing':
                                  placeholder="Example: I'm not doing well enough in my studies at Purdue...")
     
     if current_thought:
-        # Tabs for different reframing approaches
-        tab1, tab2 = st.tabs(["Self-Guided Reframing", "Bean's AI Suggestion"])
+        # Older Streamlit compatible approach - using radio buttons instead of tabs
+        tab_selection = st.radio("Choose your reframing approach:", 
+                               ["Self-Guided Reframing", "Bean's AI Suggestion"],
+                               key="tab_selection")
         
-        with tab1:
+        st.markdown("---")
+        
+        # Self-Guided tab equivalent
+        if tab_selection == "Self-Guided Reframing":
             st.markdown("### Let's examine this thought:")
             
             for question in questions:
@@ -516,16 +538,21 @@ elif st.session_state.current_page == 'reframing':
                     db.save_thought_entry(current_thought, reframed_thought, "self-guided")
                     st.success("Your Bean is so proud of you for reframing your thoughts! It's saved to your journal! 💖")
         
-        with tab2:
+        # AI Suggestion tab equivalent
+        elif tab_selection == "Bean's AI Suggestion":
             st.markdown("### Let Bean help you reframe this:")
             st.write("I'll give this thought a fresh perspective, just like how we always talk about our future together. ❤️")
             
-            # Add a button to generate AI response
+            # Add a button to generate AI response - older Streamlit compatible
             if st.button("Get Bean's reframing", key="ai_reframe"):
-                with st.spinner("Bean is thinking of the perfect words for you..."):
-                    ai_reframing = generate_thought_reframing(current_thought)
-                    
-                # Display AI response in a special format
+                # Older Streamlit-friendly spinner
+                spinner_placeholder = st.empty()
+                spinner_placeholder.markdown("Bean is thinking of the perfect words for you...")
+                
+                ai_reframing = generate_thought_reframing(current_thought)
+                
+                # Clear spinner and show response
+                spinner_placeholder.empty()
                 st.info(ai_reframing)
                 
                 # Option to save the AI reframing
@@ -546,15 +573,20 @@ elif st.session_state.current_page == 'journal':
     can show how much your perspective has grown.
     """)
     
-    # Add an AI-generated affirmation
-    with st.container():
-        st.markdown("#### Today's special message from Bean:")
-        if st.button("Get a personalized message", key="get_affirmation"):
-            with st.spinner("Bean is writing something special for you..."):
-                custom_affirmation = generate_custom_affirmation()
-                # Save the affirmation to the database
-                db.save_daily_message(custom_affirmation)
-            st.success(custom_affirmation)
+    # Add an AI-generated affirmation - no container needed for older Streamlit
+    st.markdown("#### Today's special message from Bean:")
+    if st.button("Get a personalized message", key="get_affirmation"):
+        # Older Streamlit-friendly spinner
+        spinner_placeholder = st.empty()
+        spinner_placeholder.markdown("Bean is writing something special for you...")
+        
+        custom_affirmation = generate_custom_affirmation()
+        # Save the affirmation to the database
+        db.save_daily_message(custom_affirmation)
+        
+        # Clear spinner and show success
+        spinner_placeholder.empty()
+        st.success(custom_affirmation)
     
     st.markdown("---")
     
@@ -584,8 +616,14 @@ elif st.session_state.current_page == 'journal':
     
     if specific_situation:
         if st.button("Get Bean's advice", key="get_advice"):
-            with st.spinner("Bean is thinking of the best advice for you..."):
-                personalized_advice = generate_personalized_advice(specific_situation)
+            # Older Streamlit-friendly spinner
+            spinner_placeholder = st.empty()
+            spinner_placeholder.markdown("Bean is thinking of the best advice for you...")
+            
+            personalized_advice = generate_personalized_advice(specific_situation)
+            
+            # Clear spinner and show response
+            spinner_placeholder.empty()
             st.info(personalized_advice)
     
     st.markdown("---")
