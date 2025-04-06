@@ -3,6 +3,7 @@ import random
 import datetime
 from utils import get_affirmation, get_breathing_instructions
 from exercises import get_grounding_exercise, get_overthinking_questions, get_reframing_exercise
+from ai_helper import generate_thought_reframing, generate_custom_affirmation, generate_personalized_advice
 
 # Page configuration
 st.set_page_config(
@@ -91,6 +92,27 @@ if st.session_state.current_page == 'home':
         if st.button("Need perspective", use_container_width=True):
             navigate_to('reframing')
     
+    # AI Daily Message
+    st.markdown("---")
+    st.markdown("### Today's Message from Bean 💌")
+    
+    # Initialize daily message in session state if not exists
+    if 'daily_message' not in st.session_state or 'last_message_date' not in st.session_state:
+        st.session_state.daily_message = None
+        st.session_state.last_message_date = None
+    
+    # Check if we need a new message (date changed or no message yet)
+    current_date = datetime.datetime.now().date()
+    if st.session_state.last_message_date != current_date or st.session_state.daily_message is None:
+        if st.button("Get today's special message", key="daily_message_btn"):
+            with st.spinner("Bean is writing something just for you..."):
+                st.session_state.daily_message = generate_custom_affirmation()
+                st.session_state.last_message_date = current_date
+    
+    # Display the message if it exists
+    if st.session_state.daily_message:
+        st.success(st.session_state.daily_message)
+    
     # Creative activity suggestion
     st.markdown("---")
     st.markdown("### Maybe some coloring would help?")
@@ -109,6 +131,13 @@ if st.session_state.current_page == 'home':
     Remember our Paris dream? Balcony, bathrobes, wine, Eiffel Tower view? 
     Keep breathing, we'll get there someday. 🗼✨
     """)
+    
+    # Add direct link to AI advice
+    st.markdown("---")
+    st.markdown("### Need Bean's advice right now?")
+    if st.button("Get Personalized Advice", use_container_width=True):
+        navigate_to('journal')
+        # Note: We'll direct to the journal page which has the advice section
 
 # Breathing exercise page
 elif st.session_state.current_page == 'breathing':
@@ -230,26 +259,53 @@ elif st.session_state.current_page == 'reframing':
                                  placeholder="Example: I'm not doing well enough in my studies at Purdue...")
     
     if current_thought:
-        st.markdown("### Let's examine this thought:")
+        # Tabs for different reframing approaches
+        tab1, tab2 = st.tabs(["Self-Guided Reframing", "Bean's AI Suggestion"])
         
-        for question in questions:
-            st.text_area(question, key=question)
+        with tab1:
+            st.markdown("### Let's examine this thought:")
+            
+            for question in questions:
+                st.text_area(question, key=question)
+            
+            reframing = get_reframing_exercise()
+            st.markdown("### Now, try reframing your thought:")
+            st.markdown(reframing)
+            
+            reframed_thought = st.text_area("Write your reframed thought here:", 
+                                         placeholder="Example: I'm working hard at Purdue and learning at my own pace. Every day I make progress, even when it's not perfect.")
+            
+            if reframed_thought:
+                if st.button("Save this reframing", key="save_self"):
+                    new_entry = {
+                        "original": current_thought,
+                        "reframed": reframed_thought,
+                        "method": "self-guided"
+                    }
+                    st.session_state.thought_log.append(new_entry)
+                    st.success("Your Bean is so proud of you for reframing your thoughts! It's saved to your journal! 💖")
         
-        reframing = get_reframing_exercise()
-        st.markdown("### Now, try reframing your thought:")
-        st.markdown(reframing)
-        
-        reframed_thought = st.text_area("Write your reframed thought here:", 
-                                     placeholder="Example: I'm working hard at Purdue and learning at my own pace. Every day I make progress, even when it's not perfect.")
-        
-        if reframed_thought:
-            if st.button("Save this reframing"):
-                new_entry = {
-                    "original": current_thought,
-                    "reframed": reframed_thought
-                }
-                st.session_state.thought_log.append(new_entry)
-                st.success("Your Bean is so proud of you for reframing your thoughts! It's saved to your journal! 💖")
+        with tab2:
+            st.markdown("### Let Bean help you reframe this:")
+            st.write("I'll give this thought a fresh perspective, just like how we always talk about our future together. ❤️")
+            
+            # Add a button to generate AI response
+            if st.button("Get Bean's reframing", key="ai_reframe"):
+                with st.spinner("Bean is thinking of the perfect words for you..."):
+                    ai_reframing = generate_thought_reframing(current_thought)
+                    
+                # Display AI response in a special format
+                st.info(ai_reframing)
+                
+                # Option to save the AI reframing
+                if st.button("Save Bean's reframing to journal", key="save_ai"):
+                    new_entry = {
+                        "original": current_thought,
+                        "reframed": ai_reframing,
+                        "method": "ai-suggested"
+                    }
+                    st.session_state.thought_log.append(new_entry)
+                    st.success("Bean's words of wisdom are saved to your journal! 💖")
 
 # Thought journal page
 elif st.session_state.current_page == 'journal':
@@ -263,20 +319,43 @@ elif st.session_state.current_page == 'journal':
     can show how much your perspective has grown.
     """)
     
-    # Add a personal touch
-    st.markdown("#### A note from Bean:")
-    st.info("I'm so proud of you for working through your thoughts, Boopie. Those hazel eyes of yours deserve to shine with joy, not worry. I'll always be here to remind you how amazing you are - no matter what your overthinking mind tells you. 💕")
+    # Add an AI-generated affirmation
+    with st.container():
+        st.markdown("#### Today's special message from Bean:")
+        if st.button("Get a personalized message", key="get_affirmation"):
+            with st.spinner("Bean is writing something special for you..."):
+                custom_affirmation = generate_custom_affirmation()
+            st.success(custom_affirmation)
+    
+    st.markdown("---")
     
     if not st.session_state.thought_log:
         st.info("Your journal is empty. Visit the Thought Reframing page to add entries. Just like we've been dreaming of our future husky, we can fill this page with positive thoughts! 🐺")
     else:
+        st.markdown("### Your Journal Entries")
         for i, entry in enumerate(st.session_state.thought_log):
-            with st.expander(f"Journal Entry {i+1}"):
+            method_label = "💭 Self-Guided" if entry.get('method') == "self-guided" else "✨ Bean's AI Reframing"
+            with st.expander(f"Journal Entry {i+1} - {method_label}"):
                 st.markdown("**Original thought:**")
                 st.markdown(f"*{entry['original']}*")
                 st.markdown("**Reframed thought:**")
                 st.markdown(f"*{entry['reframed']}*")
     
+    # Add a section for personalized advice
+    st.markdown("---")
+    st.markdown("### Need advice on something specific?")
+    st.write("I'm here to help with any particular situation you're facing, Boopie.")
+    
+    specific_situation = st.text_area("What's on your mind?", 
+                                     placeholder="Example: I'm feeling nervous about my upcoming presentation...")
+    
+    if specific_situation:
+        if st.button("Get Bean's advice", key="get_advice"):
+            with st.spinner("Bean is thinking of the best advice for you..."):
+                personalized_advice = generate_personalized_advice(specific_situation)
+            st.info(personalized_advice)
+    
+    st.markdown("---")
     st.markdown("""
     ### Looking at your journal helps you:
     
