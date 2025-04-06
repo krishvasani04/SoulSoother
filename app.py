@@ -14,6 +14,83 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
+# Custom CSS for aesthetics
+st.markdown("""
+<style>
+    .block-container {
+        padding-top: 2rem;
+    }
+    
+    h1, h2, h3 {
+        font-family: 'Georgia', serif;
+        letter-spacing: 0.5px;
+    }
+    
+    h1 {
+        color: #FF4B8B;
+        border-bottom: 2px solid #FFD1E0;
+        padding-bottom: 10px;
+    }
+    
+    h2 {
+        color: #FF6B9D;
+    }
+    
+    h3 {
+        color: #FF8BAD;
+    }
+    
+    .stButton>button {
+        border-radius: 20px;
+        border: 1px solid #FF6B9D;
+        transition: all 0.3s ease;
+    }
+    
+    .stButton>button:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(255, 107, 157, 0.2);
+    }
+    
+    .stTextInput>div>div>input, .stTextArea>div>div>textarea {
+        border-radius: 10px;
+        border: 1px solid #FFD1E0;
+    }
+    
+    .stTextInput>div>div>input:focus, .stTextArea>div>div>textarea:focus {
+        border: 1px solid #FF6B9D;
+        box-shadow: 0 0 5px rgba(255, 107, 157, 0.3);
+    }
+    
+    .stProgress>div>div>div>div {
+        background-color: #FF6B9D;
+    }
+    
+    .stAlert {
+        border-radius: 10px;
+    }
+    
+    .stExpander {
+        border-radius: 10px;
+        border: 1px solid #FFD1E0;
+    }
+    
+    div.stTabs [data-baseweb="tab-list"] {
+        gap: 2px;
+    }
+    
+    div.stTabs [data-baseweb="tab"] {
+        border-radius: 5px 5px 0px 0px;
+        padding: 10px 20px;
+        background-color: #FFE6EF;
+    }
+    
+    div.stTabs [aria-selected="true"] {
+        background-color: #FF6B9D;
+        color: white;
+    }
+</style>
+""", unsafe_allow_html=True)
+
 # Initialize session state variables if they don't exist
 if 'current_page' not in st.session_state:
     st.session_state.current_page = 'home'
@@ -33,67 +110,157 @@ def navigate_to(page):
 # Sidebar navigation
 with st.sidebar:
     st.image("assets/calm.svg", width=100)
-    st.markdown(f"## Hey Boopie! 💕")
-    st.markdown("##### Tools for when your mind races")
     
-    # Navigation buttons
-    st.button("Home", on_click=navigate_to, args=('home',), 
-              use_container_width=True)
-    st.button("Breathing Exercise", on_click=navigate_to, args=('breathing',), 
-              use_container_width=True)
-    st.button("Grounding Exercise", on_click=navigate_to, args=('grounding',), 
-              use_container_width=True)
-    st.button("Thought Reframing", on_click=navigate_to, args=('reframing',), 
-              use_container_width=True)
-    st.button("Thought Journal", on_click=navigate_to, args=('journal',), 
-              use_container_width=True)
+    # Style the sidebar header with custom HTML
+    st.markdown(f"""
+    <div style="text-align: center; margin-bottom: 20px;">
+        <h2 style="color: #FF4B8B; margin-bottom: 0;">Hey Boopie! 💕</h2>
+        <p style="font-style: italic; color: #9D6381;">Tools for when your mind races</p>
+    </div>
+    """, unsafe_allow_html=True)
     
-    # Personal touches
-    st.markdown("---")
-    st.markdown(f"**Bean & Boopie**")
-    st.markdown(f"*{days_together} days of adventures together* 💫")
+    # Add subtle spacing between buttons
+    st.markdown('<div style="height: 10px;"></div>', unsafe_allow_html=True)
     
-    # Affirmation at the bottom of sidebar
-    st.markdown("---")
-    st.markdown(f"*{get_affirmation()}*")
+    # Navigation buttons with icons
+    emoji_dict = {
+        'home': '🏠', 
+        'breathing': '🌬️', 
+        'grounding': '🌿', 
+        'reframing': '💭', 
+        'journal': '📓'
+    }
     
-    # Song recommendation
-    st.markdown("---")
-    st.markdown("**When you need a smile:**")
-    st.markdown("Listen to 'ilym' by John K 🎵")
-    st.markdown("*Or check out our 'Happy Baby' playlist* 🎧")
+    button_names = ['Home', 'Breathing Exercise', 'Grounding Exercise', 'Thought Reframing', 'Thought Journal']
+    button_routes = ['home', 'breathing', 'grounding', 'reframing', 'journal']
+    
+    for name, route in zip(button_names, button_routes):
+        # Check if this is the current page
+        is_active = st.session_state.current_page == route
+        
+        # Different styling for active button
+        if is_active:
+            st.markdown(f"""
+            <div style="background-color: #FFC6D9; border-radius: 15px; padding: 10px; text-align: center; margin: 5px 0;">
+                <span style="color: #FF4B8B; font-weight: bold;">{emoji_dict[route]} {name}</span>
+            </div>
+            """, unsafe_allow_html=True)
+        else:
+            if st.button(f"{emoji_dict[route]} {name}", key=f"nav_{route}", 
+                      use_container_width=True, on_click=navigate_to, args=(route,)):
+                pass
+    
+    # Add a decorative divider
+    st.markdown("""
+    <div style="margin: 20px 0; text-align: center;">
+        <div style="height: 2px; background-image: linear-gradient(to right, transparent, #FFB0EE, transparent);"></div>
+    </div>
+    """, unsafe_allow_html=True)
+    
+    # Personal touches with more elegant styling
+    st.markdown(f"""
+    <div style="text-align: center; background-color: #FFF0F7; border-radius: 10px; padding: 10px; margin: 10px 0;">
+        <div style="font-weight: bold; color: #FF6B9D;">Bean & Boopie</div>
+        <div style="font-style: italic; font-size: 0.9em;">{days_together} days of adventures together 💫</div>
+    </div>
+    """, unsafe_allow_html=True)
+    
+    # Affirmation with prettier styling
+    affirmation = get_affirmation()
+    st.markdown("""
+    <div style="margin: 20px 0; text-align: center;">
+        <div style="height: 2px; background-image: linear-gradient(to right, transparent, #FFB0EE, transparent);"></div>
+    </div>
+    """, unsafe_allow_html=True)
+    
+    st.markdown(f"""
+    <div style="font-style: italic; text-align: center; color: #FF8BAD; padding: 10px; border-radius: 10px; background-color: #FFF8FA;">
+        "{affirmation}"
+    </div>
+    """, unsafe_allow_html=True)
+    
+    # Song recommendation with elegant styling
+    st.markdown("""
+    <div style="margin: 20px 0; text-align: center;">
+        <div style="height: 2px; background-image: linear-gradient(to right, transparent, #FFB0EE, transparent);"></div>
+    </div>
+    """, unsafe_allow_html=True)
+    
+    st.markdown("""
+    <div style="text-align: center; background-color: #FFF0F7; border-radius: 10px; padding: 10px; margin: 10px 0;">
+        <div style="font-weight: bold; color: #FF6B9D;">When you need a smile 🎵</div>
+        <div style="font-size: 0.9em; margin-top: 5px;">Listen to 'ilym' by John K</div>
+        <div style="font-style: italic; font-size: 0.8em;">Or check out our 'Happy Baby' playlist 🎧</div>
+    </div>
+    """, unsafe_allow_html=True)
 
 # Home page
 if st.session_state.current_page == 'home':
-    st.title("Hey Hiya! Your Calm Space Awaits 💖")
+    # Styled header with gradient
+    st.markdown("""
+    <div style="text-align: center; margin-bottom: 1.5rem;">
+        <h1 style="color: #FF4B8B; margin-bottom: 0.5rem; font-size: 2.5rem;">
+            Hey Hiya! Your Calm Space Awaits 💖
+        </h1>
+        <div style="height: 4px; background-image: linear-gradient(to right, transparent, #FF6B9D, transparent);
+                    margin: 0 auto 1rem auto; width: 70%;"></div>
+    </div>
+    """, unsafe_allow_html=True)
     
+    # Prettier welcome message with card-like styling
     st.markdown(f"""
-    ### From Bean to Boopie with love
+    <div style="background-color: #FFF0F7; border-radius: 15px; padding: 20px; margin-bottom: 2rem; 
+                border-left: 5px solid #FF6B9D; box-shadow: 0 4px 6px rgba(255, 107, 157, 0.1);">
+        <h3 style="color: #FF4B8B; margin-top: 0;">From Bean to Boopie with love</h3>
+        <p style="margin-bottom: 1rem;">
+            This is a special space just for you, for those moments when your beautiful mind 
+            is racing too fast. Whether you're in your studio in West Lafayette or anywhere else,
+            I'm here with you in spirit.
+        </p>
+        <p style="font-weight: bold; color: #FF6B9D; font-size: 1.1rem;">
+            How's my Boopie feeling right now?
+        </p>
+    </div>
+    """, unsafe_allow_html=True)
     
-    This is a special space just for you, for those moments when your beautiful mind 
-    is racing too fast. Whether you're in your studio in West Lafayette or anywhere else,
-    I'm here with you in spirit.
+    # Styled mood selection buttons
+    mood_options = [
+        {"title": "Anxious or worried", "icon": "😰", "color": "#8AADF4", "route": "breathing"},
+        {"title": "Stuck in my thoughts", "icon": "🤔", "color": "#A6DA95", "route": "grounding"},
+        {"title": "Need perspective", "icon": "🧐", "color": "#F5BDE6", "route": "reframing"}
+    ]
     
-    **How's my Boopie feeling right now?**
-    """)
+    cols = st.columns(3)
+    for i, option in enumerate(mood_options):
+        with cols[i]:
+            st.markdown(f"""
+            <div style="text-align: center; cursor: pointer;" onclick="document.getElementById('btn_{option['route']}').click();">
+                <div style="font-size: 2rem; margin-bottom: 0.5rem;">{option['icon']}</div>
+                <div style="background-color: {option['color']}; color: white; padding: 10px; 
+                            border-radius: 10px; font-weight: bold;">
+                    {option['title']}
+                </div>
+            </div>
+            """, unsafe_allow_html=True)
+            # Hidden button for the onClick handler
+            if st.button(option['title'], key=f"btn_{option['route']}", 
+                      use_container_width=True, on_click=navigate_to, args=(option['route'],)):
+                pass
     
-    col1, col2, col3 = st.columns(3)
+    # Styled divider
+    st.markdown("""
+    <div style="margin: 2rem 0; text-align: center;">
+        <div style="height: 2px; background-image: linear-gradient(to right, transparent, #FFB0EE, #FF6B9D, #FFB0EE, transparent);"></div>
+    </div>
+    """, unsafe_allow_html=True)
     
-    with col1:
-        if st.button("Anxious or worried", use_container_width=True):
-            navigate_to('breathing')
-    
-    with col2:
-        if st.button("Stuck in my thoughts", use_container_width=True):
-            navigate_to('grounding')
-    
-    with col3:
-        if st.button("Need perspective", use_container_width=True):
-            navigate_to('reframing')
-    
-    # AI Daily Message
-    st.markdown("---")
-    st.markdown("### Today's Message from Bean 💌")
+    # AI Daily Message with card styling
+    st.markdown("""
+    <div style="margin-bottom: 1rem;">
+        <h3 style="color: #FF4B8B; display: inline-block; margin-right: 10px;">Today's Message from Bean</h3>
+        <span style="font-size: 1.5rem;">💌</span>
+    </div>
+    """, unsafe_allow_html=True)
     
     # Check for today's message in the database
     today_message = db.get_today_message()
@@ -109,33 +276,61 @@ if st.session_state.current_page == 'home':
     
     # Display the message if it exists
     if today_message:
-        st.success(today_message)
+        st.markdown(f"""
+        <div style="background-color: #E7F5EB; border-radius: 15px; padding: 20px; margin-bottom: 1.5rem;
+                    border-left: 5px solid #8BC0A8; box-shadow: 0 4px 6px rgba(139, 192, 168, 0.1);">
+            <p style="font-style: italic; color: #2D7D53; margin: 0; font-size: 1.1rem;">"{today_message}"</p>
+        </div>
+        """, unsafe_allow_html=True)
     
-    # Creative activity suggestion
-    st.markdown("---")
-    st.markdown("### Maybe some coloring would help?")
-    st.markdown("I know how much you enjoy drawing and coloring when your mind is busy. Maybe take out your art supplies for a bit? 🎨")
-    
-    st.markdown("---")
-    
+    # Creative activity suggestion with card styling
     st.markdown("""
-    ### Just a few reminders from your Bean:
+    <div style="background-color: #FFF8E1; border-radius: 15px; padding: 20px; margin: 1.5rem 0;
+                border-left: 5px solid #FFD54F; box-shadow: 0 4px 6px rgba(255, 213, 79, 0.1);">
+        <h3 style="color: #E6A800; margin-top: 0;">Maybe some coloring would help? 🎨</h3>
+        <p style="margin: 0;">
+            I know how much you enjoy drawing and coloring when your mind is busy. 
+            Maybe take out your art supplies for a bit?
+        </p>
+    </div>
+    """, unsafe_allow_html=True)
     
-    * Your thoughts are just thoughts, not reality - like how Penn State is clearly superior to Purdue 😉
-    * This moment will pass, just like our debates about you eating enough
-    * You're amazing at working through challenges (except spelling "Porsche" correctly 😘)
-    * When in doubt, hug Daisy the bunny tight!
+    # Styled divider
+    st.markdown("""
+    <div style="margin: 2rem 0; text-align: center;">
+        <div style="height: 2px; background-image: linear-gradient(to right, transparent, #FFB0EE, #FF6B9D, #FFB0EE, transparent);"></div>
+    </div>
+    """, unsafe_allow_html=True)
     
-    Remember our Paris dream? Balcony, bathrobes, wine, Eiffel Tower view? 
-    Keep breathing, we'll get there someday. 🗼✨
-    """)
+    # Reminders with nicer styling
+    st.markdown("""
+    <div style="background-color: #F0F4FF; border-radius: 15px; padding: 20px; margin-bottom: 1.5rem;
+                border-left: 5px solid #8BB6FF; box-shadow: 0 4px 6px rgba(139, 182, 255, 0.1);">
+        <h3 style="color: #4B77CC; margin-top: 0;">Just a few reminders from your Bean:</h3>
+        <ul style="padding-left: 20px; margin-bottom: 0;">
+            <li>Your thoughts are just thoughts, not reality - like how Penn State is clearly superior to Purdue 😉</li>
+            <li>This moment will pass, just like our debates about you eating enough</li>
+            <li>You're amazing at working through challenges (except spelling "Porsche" correctly 😘)</li>
+            <li>When in doubt, hug Daisy the bunny tight!</li>
+        </ul>
+        <p style="margin-top: 15px; color: #4B77CC;">
+            Remember our Paris dream? Balcony, bathrobes, wine, Eiffel Tower view? 
+            Keep breathing, we'll get there someday. 🗼✨
+        </p>
+    </div>
+    """, unsafe_allow_html=True)
     
     # Add direct link to AI advice
-    st.markdown("---")
-    st.markdown("### Need Bean's advice right now?")
-    if st.button("Get Personalized Advice", use_container_width=True):
-        navigate_to('journal')
-        # Note: We'll direct to the journal page which has the advice section
+    st.markdown("""
+    <div style="text-align: center; margin: 2rem 0 1rem 0;">
+        <h3 style="color: #FF4B8B; margin-bottom: 1rem;">Need Bean's advice right now?</h3>
+    </div>
+    """, unsafe_allow_html=True)
+    
+    col1, col2, col3 = st.columns([1, 2, 1])
+    with col2:
+        if st.button("Get Personalized Advice", use_container_width=True, on_click=navigate_to, args=('journal',)):
+            pass
 
 # Breathing exercise page
 elif st.session_state.current_page == 'breathing':
