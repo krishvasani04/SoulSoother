@@ -6,13 +6,8 @@ from exercises import get_grounding_exercise, get_overthinking_questions, get_re
 from ai_helper import generate_thought_reframing, generate_custom_affirmation, generate_personalized_advice
 import database as db
 
-# Page configuration
-st.set_page_config(
-    page_title="Boopie's Calm Space",
-    page_icon="🧠",
-    layout="centered",
-    initial_sidebar_state="expanded"
-)
+# Set page title using HTML (compatible with older Streamlit versions)
+st.markdown("<h1 style='text-align: center'>Boopie's Calm Space 🧠</h1>", unsafe_allow_html=True)
 
 # Custom CSS for aesthetics
 st.markdown("""
