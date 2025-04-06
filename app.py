@@ -1,6 +1,8 @@
 import streamlit as st
 import random
 import datetime
+import os
+import json
 from utils import get_affirmation, get_breathing_instructions
 from exercises import get_grounding_exercise, get_overthinking_questions, get_reframing_exercise
 from ai_helper import generate_thought_reframing, generate_custom_affirmation, generate_personalized_advice
@@ -8,6 +10,47 @@ import database as db
 
 # Set page title using HTML (compatible with older Streamlit versions)
 st.markdown("<h1 style='text-align: center'>Boopie's Calm Space 🧠</h1>", unsafe_allow_html=True)
+
+# Custom session state implementation for older Streamlit versions
+if not hasattr(st, 'session_state'):
+    # Define a session state class
+    class SessionState:
+        def __init__(self, **kwargs):
+            self.__dict__.update(kwargs)
+            
+        def get(self, key, default=None):
+            return self.__dict__.get(key, default)
+            
+    # File path for storing session state between runs
+    SESSION_PATH = '.session_state.json'
+    
+    # Load existing session state if it exists
+    if os.path.exists(SESSION_PATH):
+        try:
+            with open(SESSION_PATH, 'r') as f:
+                session_data = json.load(f)
+        except:
+            session_data = {}
+    else:
+        session_data = {}
+    
+    # Create session state with default values
+    session_state = SessionState(
+        current_page=session_data.get('current_page', 'home'),
+        breathing_count=session_data.get('breathing_count', 0)
+    )
+    
+    # Function to save session state
+    def save_session_state():
+        state_to_save = {
+            'current_page': session_state.current_page,
+            'breathing_count': session_state.breathing_count
+        }
+        with open(SESSION_PATH, 'w') as f:
+            json.dump(state_to_save, f)
+    
+    # Add session_state as an attribute to st
+    st.session_state = session_state
 
 # Custom CSS for aesthetics
 st.markdown("""
@@ -100,7 +143,12 @@ days_together = (today - relationship_start).days
 # Function to change pages
 def navigate_to(page):
     st.session_state.current_page = page
-    st.rerun()
+    # Save session state for older Streamlit versions
+    if hasattr(st, 'save_session_state'):
+        save_session_state()
+    # For older Streamlit versions without rerun()
+    raise st.script_runner.RerunException(st.script_request_queue.RerunData(
+        None))
 
 # Sidebar navigation
 with st.sidebar:
@@ -353,7 +401,12 @@ elif st.session_state.current_page == 'breathing':
     # Button to manually advance through the breathing cycle
     if st.button("Next Breath"):
         st.session_state.breathing_count = (st.session_state.breathing_count + 1) % 3
-        st.rerun()
+        # Save session state for older Streamlit versions
+        if hasattr(st, 'save_session_state'):
+            save_session_state()
+        # For older Streamlit versions without rerun()
+        raise st.script_runner.RerunException(st.script_request_queue.RerunData(
+            None))
     
     # Add a note about us
     st.info("Remember when we watched The Night Agent together and you said the suspense was making your heart race? This breathing exercise helps with exactly that feeling! 💕")
