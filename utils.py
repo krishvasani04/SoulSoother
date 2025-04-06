@@ -3,21 +3,21 @@ import random
 def get_affirmation():
     """Return a random affirmation to help with overthinking."""
     affirmations = [
-        "You are stronger than your anxious thoughts.",
-        "This moment of overthinking will pass.",
-        "You've gotten through difficult moments before.",
-        "Your thoughts are not facts.",
-        "You are doing the best you can right now.",
-        "Take a breath. You are exactly where you need to be.",
-        "You are capable of finding calm in the storm.",
-        "This feeling is temporary. You will not feel this way forever.",
-        "Your worth is not determined by your thoughts.",
-        "Breathe in peace, breathe out worry.",
-        "You are safe in this moment.",
-        "One thought at a time, one moment at a time.",
-        "Your mind is a tool, not your master.",
-        "You don't have to believe everything you think.",
-        "Progress isn't always perfect, and that's okay."
+        "You are stronger than your anxious thoughts, Boopie.",
+        "This moment of overthinking will pass - just like our Night Agent binge-watching.",
+        "You've gotten through difficult moments before. Remember how brave you are?",
+        "Your thoughts are not facts - just like 'Purdue is better than Penn State' isn't a fact! 😉",
+        "You are doing the best you can right now, and that's all that matters.",
+        "Take a breath. Your Bean loves you exactly as you are.",
+        "You are capable of finding calm in the storm, just like you're capable of making amazing pasta.",
+        "This feeling is temporary. One day we'll have our husky and laugh about today's worries.",
+        "Your worth is not determined by your thoughts - it's in those beautiful hazel eyes.",
+        "Breathe in peace, breathe out worry. I'm always here for you.",
+        "You are safe in this moment. Daisy the bunny is watching over you.",
+        "One thought at a time, one moment at a time. We'll get to Greece for our honeymoon someday.",
+        "Your beautiful mind is a tool, not your master.",
+        "I love your cute nose and everything about you, even when you don't.",
+        "It's okay to stay up late sometimes, my night owl. Your thoughts will be clearer in the morning."
     ]
     return random.choice(affirmations)
 

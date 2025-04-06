@@ -12,28 +12,28 @@ def get_grounding_exercise():
 def get_overthinking_questions():
     """Return questions to challenge overthinking thoughts."""
     questions = [
-        "What evidence supports this thought?",
-        "What evidence contradicts this thought?",
-        "Is there another way to look at this situation?",
-        "What would I tell a friend who had this thought?",
-        "Will this matter as much in 6 months? A year?",
-        "Am I confusing a thought with a fact?",
-        "Am I assuming I know what others are thinking?",
-        "Am I expecting perfection from myself?"
+        "What evidence supports this thought? (Not just Purdue propaganda 😉)",
+        "What would Bean tell you about this thought?",
+        "Is there another way to look at this situation - maybe from our Paris balcony view?",
+        "What would you tell Daisy the bunny if she had this thought?",
+        "Will this matter when we're in Greece for our honeymoon?",
+        "Am I confusing a thought with a fact? (Like confusing how to spell 'Porsche'?)",
+        "What would I think about this after a good night's sleep (even if it's at 3am)?",
+        "Am I being as kind to myself as I am when I make pasta for others?"
     ]
     return questions
 
 def get_reframing_exercise():
     """Return instructions for thought reframing."""
     instructions = """
-    To reframe your thought, consider:
+    To reframe your thought, my beautiful Boopie, consider:
     
-    1. Identifying the cognitive distortion (all-or-nothing thinking, catastrophizing, mind reading, etc.)
-    2. Looking for the factual evidence (not assumptions or fears)
-    3. Considering a more balanced or compassionate perspective
-    4. Focusing on what you can control or influence
-    5. Acknowledging uncertainty while not assuming the worst
+    1. Is this thought a bit like trypophobia - an irrational fear we both understand?
+    2. What would you say if I was having this thought? (I know you'd be kinder than you are to yourself)
+    3. Imagine we're looking at the Eiffel Tower from our dream balcony - how would this thought look from there?
+    4. Focus on what you can control - like how you make that amazing pasta!
+    5. Just like we don't know if our future husky will be well-behaved, we can't predict the worst outcome
     
-    Your reframed thought should be both realistic and helpful.
+    Your reframed thought should feel as good as Kinder Joy tastes! And remember, your Bean loves you no matter what.
     """
     return instructions
