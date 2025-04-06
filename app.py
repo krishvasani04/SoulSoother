@@ -4,6 +4,7 @@ import datetime
 from utils import get_affirmation, get_breathing_instructions
 from exercises import get_grounding_exercise, get_overthinking_questions, get_reframing_exercise
 from ai_helper import generate_thought_reframing, generate_custom_affirmation, generate_personalized_advice
+import database as db
 
 # Page configuration
 st.set_page_config(
@@ -18,8 +19,6 @@ if 'current_page' not in st.session_state:
     st.session_state.current_page = 'home'
 if 'breathing_count' not in st.session_state:
     st.session_state.breathing_count = 0
-if 'thought_log' not in st.session_state:
-    st.session_state.thought_log = []
 
 # Calculate days together
 relationship_start = datetime.datetime(2024, 6, 27)
@@ -96,22 +95,21 @@ if st.session_state.current_page == 'home':
     st.markdown("---")
     st.markdown("### Today's Message from Bean 💌")
     
-    # Initialize daily message in session state if not exists
-    if 'daily_message' not in st.session_state or 'last_message_date' not in st.session_state:
-        st.session_state.daily_message = None
-        st.session_state.last_message_date = None
+    # Check for today's message in the database
+    today_message = db.get_today_message()
     
-    # Check if we need a new message (date changed or no message yet)
-    current_date = datetime.datetime.now().date()
-    if st.session_state.last_message_date != current_date or st.session_state.daily_message is None:
+    # If no message for today, provide option to generate one
+    if not today_message:
         if st.button("Get today's special message", key="daily_message_btn"):
             with st.spinner("Bean is writing something just for you..."):
-                st.session_state.daily_message = generate_custom_affirmation()
-                st.session_state.last_message_date = current_date
+                new_message = generate_custom_affirmation()
+                # Save the message to the database
+                db.save_daily_message(new_message)
+                today_message = new_message
     
     # Display the message if it exists
-    if st.session_state.daily_message:
-        st.success(st.session_state.daily_message)
+    if today_message:
+        st.success(today_message)
     
     # Creative activity suggestion
     st.markdown("---")
@@ -277,12 +275,8 @@ elif st.session_state.current_page == 'reframing':
             
             if reframed_thought:
                 if st.button("Save this reframing", key="save_self"):
-                    new_entry = {
-                        "original": current_thought,
-                        "reframed": reframed_thought,
-                        "method": "self-guided"
-                    }
-                    st.session_state.thought_log.append(new_entry)
+                    # Save to database
+                    db.save_thought_entry(current_thought, reframed_thought, "self-guided")
                     st.success("Your Bean is so proud of you for reframing your thoughts! It's saved to your journal! 💖")
         
         with tab2:
@@ -299,12 +293,8 @@ elif st.session_state.current_page == 'reframing':
                 
                 # Option to save the AI reframing
                 if st.button("Save Bean's reframing to journal", key="save_ai"):
-                    new_entry = {
-                        "original": current_thought,
-                        "reframed": ai_reframing,
-                        "method": "ai-suggested"
-                    }
-                    st.session_state.thought_log.append(new_entry)
+                    # Save to database
+                    db.save_thought_entry(current_thought, ai_reframing, "ai-suggested")
                     st.success("Bean's words of wisdom are saved to your journal! 💖")
 
 # Thought journal page
@@ -325,17 +315,23 @@ elif st.session_state.current_page == 'journal':
         if st.button("Get a personalized message", key="get_affirmation"):
             with st.spinner("Bean is writing something special for you..."):
                 custom_affirmation = generate_custom_affirmation()
+                # Save the affirmation to the database
+                db.save_daily_message(custom_affirmation)
             st.success(custom_affirmation)
     
     st.markdown("---")
     
-    if not st.session_state.thought_log:
+    # Load entries from database
+    entries = db.get_thought_entries()
+    
+    if not entries:
         st.info("Your journal is empty. Visit the Thought Reframing page to add entries. Just like we've been dreaming of our future husky, we can fill this page with positive thoughts! 🐺")
     else:
         st.markdown("### Your Journal Entries")
-        for i, entry in enumerate(st.session_state.thought_log):
-            method_label = "💭 Self-Guided" if entry.get('method') == "self-guided" else "✨ Bean's AI Reframing"
-            with st.expander(f"Journal Entry {i+1} - {method_label}"):
+        for i, entry in enumerate(entries):
+            method_label = "💭 Self-Guided" if entry['method'] == "self-guided" else "✨ Bean's AI Reframing"
+            date_str = datetime.datetime.fromisoformat(entry['created_at']).strftime("%b %d, %Y at %I:%M %p")
+            with st.expander(f"Journal Entry {i+1} - {date_str} - {method_label}"):
                 st.markdown("**Original thought:**")
                 st.markdown(f"*{entry['original']}*")
                 st.markdown("**Reframed thought:**")
